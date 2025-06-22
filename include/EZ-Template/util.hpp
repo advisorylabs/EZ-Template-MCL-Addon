@@ -108,6 +108,23 @@ enum e_angle_behavior { raw = 0,
                         shortest = 3,
                         longest = 4 };
 
+enum e_mcl_distance_direction { FRNT = 0,
+                                frnt = FRNT,
+                                front = FRNT,
+                                FRONT = FRNT,
+                                LFT = 1,
+                                lft = LFT,
+                                left = LFT,
+                                LEFT = LFT,
+                                bk = 2,
+                                BK = bk,
+                                back = bk,
+                                BACK = bk,
+                                RGHT = 3,
+                                rght = RGHT,
+                                right = RGHT,
+                                RIGHT = RGHT };
+
 const double ANGLE_NOT_SET = 0.0000000000000000000001;
 const okapi::QAngle p_ANGLE_NOT_SET = 0.0000000000000000000001_deg;
 
