@@ -147,6 +147,28 @@ typedef struct united_pose {
 } united_pose;
 
 /**
+ * Struct for bezier curves;
+ */
+typedef struct bezier {
+  pose A;
+  pose B;
+  pose C;
+  pose D;
+  int speed;
+} bezier;
+
+/**
+ * Struct for united bezier curves;
+ */
+typedef struct united_bezier {
+  united_pose A;
+  united_pose B;
+  united_pose C;
+  united_pose D;
+  int speed;
+} united_bezier;
+
+/**
  * Struct for odom movements.
  */
 typedef struct odom {
@@ -346,5 +368,6 @@ std::vector<odom> united_odoms_to_odoms(std::vector<united_odom> inputs);
  */
 odom united_odom_to_odom(united_odom input);
 
+std::vector<bezier> united_bezier_to_bezier(std::vector<united_bezier> input);
 }  // namespace util
 }  // namespace ez

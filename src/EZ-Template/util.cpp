@@ -281,5 +281,17 @@ odom united_odom_to_odom(united_odom input) {
   return united_odoms_to_odoms({input})[0];
 }
 
+std::vector<bezier> united_bezier_to_bezier(std::vector<united_bezier> input){
+  std::vector<bezier> output;
+  for(int i = 0; i < input.size(); ++i){
+    pose new_pose_A = united_pose_to_pose(input.at(i).A);
+    pose new_pose_B = united_pose_to_pose(input.at(i).B);
+    pose new_pose_C = united_pose_to_pose(input.at(i).C);
+    pose new_pose_D = united_pose_to_pose(input.at(i).D);
+    output.push_back({new_pose_A, new_pose_B, new_pose_C, new_pose_D, input.at(i).speed});
+  }
+  return output;
+}
+
 }  // namespace util
 }  // namespace ez

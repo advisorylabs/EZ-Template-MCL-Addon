@@ -891,6 +891,14 @@ class Drive {
   void pid_odom_behavior_set(e_angle_behavior behavior);
 
   /**
+   * Sets the amount of points sampled from a bezier curve path.
+   * 
+   * \param point_amount
+   *         5
+   */
+  void bezier_sample_total_set( int sample_total);
+
+  /**
    * Returns the turn behavior for turns.
    */
   e_angle_behavior pid_turn_behavior_get();
@@ -1709,6 +1717,50 @@ class Drive {
    *        ramp up from a lower speed to your target speed
    */
   void pid_odom_set(std::vector<united_odom> p_imovements, bool slew_on);
+
+  /** 
+   * Creates a bezier path.
+   *
+   * \param imovements
+   *        {{x, y}, {x, y}, {x, y}, {x, y}, 1 - 127}
+   * \param dir
+   *        Direction
+   */
+   void pid_odom_bezier_set(std::vector<bezier> imovements, drive_directions dir);
+
+   /** 
+   * Creates a bezier path.
+   *
+   * \param imovements
+   *        {{x, y}, {x, y}, {x, y}, {x, y}, 1 - 127}
+   * \param dir
+   *        Direction
+   * \param slew_on
+   *        ramp up from a lower speed to your target speed.
+   */
+   void pid_odom_bezier_set(std::vector<bezier> imovements, drive_directions dir, bool slew_on);
+
+   /** 
+   * Creates a bezier path with okapi units.
+   *
+   * \param p_imovements
+   *        {{x_in, y_in}, {x_in, y_in}, {x_in, y_in}, {x_in, y_in}, 1 - 127}
+   * \param dir
+   *        Direction
+   */
+   void pid_odom_bezier_set(std::vector<united_bezier> p_imovements, drive_directions dir);
+
+   /** 
+   * Creates a bezier path with okapi units.
+   *
+   * \param p_imovements
+   *        {{x_in, y_in}, {x_in, y_in}, {x_in, y_in}, {x_in, y_in}, 1 - 127}
+   * \param dir
+   *        Direction
+   * \param slew_on
+   *        ramp up from a lower speed to your target speed.
+   */
+   void pid_odom_bezier_set(std::vector<united_bezier> p_imovements, drive_directions dir, bool slew_on);
 
   /**
    * Sets the robot to move forward using PID with okapi units, only using slew if globally enabled.
@@ -3502,6 +3554,10 @@ class Drive {
   bool odom_tracker_right_enabled = false;
   bool odom_tracker_front_enabled = false;
   bool odom_tracker_back_enabled = false;
+  pose bezier_sample(bezier input, double step);
+  double get_angle(pose A, pose D);
+  int point_sample_total = 5;
+  int Bratio;
 
   double chain_target_start = 0.0;
   double chain_sensor_start = 0.0;

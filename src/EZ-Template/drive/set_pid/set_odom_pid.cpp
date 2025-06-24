@@ -5,6 +5,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
 #include "EZ-Template/drive/drive.hpp"
+#include "EZ-Template/util.hpp"
 #include "okapi/api/units/QAngle.hpp"
 
 /////
@@ -156,6 +157,55 @@ void Drive::pid_odom_set(std::vector<united_odom> p_imovements) {
 void Drive::pid_odom_set(std::vector<united_odom> p_imovements, bool slew_on) {
   std::vector<odom> imovements = util::united_odoms_to_odoms(p_imovements);
   pid_odom_set(imovements, slew_on);
+}
+
+/////
+// bezier
+/////
+void Drive::pid_odom_bezier_set(std::vector<bezier> imovements, drive_directions dir){
+  std::vector<odom> Path;
+  odom Path_step;
+  for(int i = 0; i < imovements.size(); ++i){
+    for(int k = 0; k < point_sample_total; ++k){
+      Bratio = (k + 1) / point_sample_total;
+      Path_step.target = bezier_sample(imovements.at(i), Bratio);
+      if(i == imovements.size() - 1 && k == point_sample_total - 1){
+        Path_step.target.theta = get_angle(imovements.at(i).C, imovements.at(i).D);
+      }
+      Path_step.drive_direction = dir;
+      Path_step.max_xy_speed = imovements.at(i).speed;
+      Path.push_back(Path_step);
+    }
+  }
+  pid_odom_set(Path);
+}
+
+void Drive::pid_odom_bezier_set(std::vector<bezier> imovements, drive_directions dir, bool slew_on){
+  std::vector<odom> Path;
+  odom Path_step;
+  for(int i = 0; i < imovements.size(); ++i){
+    for(int k = 0; k < point_sample_total; ++k){
+      Bratio = (k + 1) / point_sample_total;
+      Path_step.target = bezier_sample(imovements.at(i), Bratio);
+      if(i == imovements.size() - 1 && k == point_sample_total - 1){
+        Path_step.target.theta = get_angle(imovements.at(i).C, imovements.at(i).D);
+      }
+      Path_step.drive_direction = dir;
+      Path_step.max_xy_speed = imovements.at(i).speed;
+      Path.push_back(Path_step);
+    }
+  }
+  pid_odom_set(Path, slew_on);
+}
+
+void Drive::pid_odom_bezier_set(std::vector<united_bezier> p_imovements, drive_directions dir){
+  std::vector<bezier> imovements = util::united_bezier_to_bezier(p_imovements);
+  pid_odom_bezier_set(imovements, dir);
+}
+
+void Drive::pid_odom_bezier_set(std::vector<united_bezier> p_imovements, drive_directions dir, bool slew_on){
+  std::vector<bezier> imovements = util::united_bezier_to_bezier(p_imovements);
+  pid_odom_bezier_set(imovements, dir, slew_on);
 }
 
 /////
