@@ -15,4 +15,7 @@ void odom_pure_pursuit_example();
 void odom_pure_pursuit_wait_until_example();
 void odom_boomerang_example();
 void odom_boomerang_injected_pure_pursuit_example();
+void single_bezier_path_example();
+void multiple_bezier_path_example();
+void bezier_wait_until_example();
 void measure_offsets();

@@ -319,13 +319,13 @@ void odom_boomerang_injected_pure_pursuit_example() {
 // Single Bezier Path
 ///
 void single_bezier_path_example(){
-  chassis.pid_odom_bezier_set({{{0_in, 0_in}, {0_in, 24_in}, {24_in, 24_in}, {24_in, 48_in}, DRIVE_SPEED}}, fwd);
+  chassis.pid_odom_bezier_set({{{0_in, 0_in}, {0_in, 12_in}, {12_in, 12_in}, {12_in, 24_in}, DRIVE_SPEED}}, fwd);
   chassis.pid_wait();
 
   chassis.pid_turn_set(90_deg, TURN_SPEED);
   chassis.pid_wait();
 
-  chassis.pid_odom_bezier_set({{{24_in, 48_in}, {0_in, 48_in}, {0_in, 24_in}, {0_in, 0_in}, DRIVE_SPEED}}, rev);
+  chassis.pid_odom_bezier_set({{{12_in, 24_in}, {0_in, 24_in}, {0_in, 12_in}, {0_in, 0_in}, DRIVE_SPEED}}, rev);
   chassis.pid_wait();
 }
 
@@ -333,12 +333,12 @@ void single_bezier_path_example(){
 // multi-Bezier Path
 ///
 void multiple_bezier_path_example(){
-  chassis.pid_odom_bezier_set({ {{0_in, 0_in}, {0_in, 24_in}, {24_in, 24_in}, {24_in, 48_in}, DRIVE_SPEED}, 
-                                {{24_in, 48_in}, {24_in, 60_in}, {0_in, 60_in}, {0_in, 48_in}, DRIVE_SPEED}, 
-                                {{0_in, 48_in}, {0_in, 24_in}, {24_in, 24_in}, {36_in, 24_in}, DRIVE_SPEED}}, fwd);
+  chassis.pid_odom_bezier_set({ {{0_in, 0_in}, {0_in, 12_in}, {12_in, 12_in}, {12_in, 24_in}, DRIVE_SPEED}, 
+                                {{12_in, 24_in}, {12_in, 30_in}, {0_in, 30_in}, {0_in, 24_in}, DRIVE_SPEED}, 
+                                {{0_in, 24_in}, {0_in, 12_in}, {12_in, 12_in}, {18_in, 12_in}, DRIVE_SPEED}}, fwd);
   chassis.pid_wait();
 
-  chassis.pid_odom_bezier_set({{{36_in, 24_in}, {24_in, 24_in}, {0_in, 24_in}, {0_in, 0_in}, DRIVE_SPEED}}, rev);
+  chassis.pid_odom_bezier_set({{{18_in, 12_in}, {12_in, 12_in}, {0_in, 12_in}, {0_in, 0_in}, DRIVE_SPEED}}, rev);
   chassis.pid_wait();
 }
 
@@ -346,15 +346,15 @@ void multiple_bezier_path_example(){
 // Bezier Wait Until
 ///
 void bezier_wait_until_example(){
-  chassis.pid_odom_bezier_set({ {{0_in, 0_in}, {0_in, 24_in}, {24_in, 24_in}, {24_in, 48_in}, DRIVE_SPEED}, 
-                                {{24_in, 48_in}, {24_in, 60_in}, {0_in, 60_in}, {0_in, 48_in}, DRIVE_SPEED}, 
-                                {{0_in, 48_in}, {0_in, 24_in}, {24_in, 24_in}, {36_in, 24_in}, DRIVE_SPEED}}, fwd);
+  chassis.pid_odom_bezier_set({ {{0_in, 0_in}, {0_in, 12_in}, {12_in, 12_in}, {12_in, 24_in}, DRIVE_SPEED}, 
+                                {{12_in, 24_in}, {12_in, 30_in}, {0_in, 30_in}, {0_in, 24_in}, DRIVE_SPEED}, 
+                                {{0_in, 24_in}, {0_in, 12_in}, {12_in, 12_in}, {18_in, 12_in}, DRIVE_SPEED}}, fwd);
   chassis.pid_wait_until(1, 2);
   // Intake.move(127);
   chassis.pid_wait();
   // Intake.move(0);
 
-  chassis.pid_odom_bezier_set({{{36_in, 24_in}, {24_in, 24_in}, {0_in, 24_in}, {0_in, 0_in}, DRIVE_SPEED}}, rev);
+  chassis.pid_odom_bezier_set({{{18_in, 12_in}, {12_in, 12_in}, {0_in, 12_in}, {0_in, 0_in}, DRIVE_SPEED}}, rev);
   chassis.pid_wait();
 }
 
