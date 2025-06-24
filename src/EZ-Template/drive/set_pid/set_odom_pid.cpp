@@ -181,8 +181,8 @@ void Drive::pid_odom_bezier_set(std::vector<bezier> imovements, drive_directions
 }
 
 void Drive::pid_odom_bezier_set(std::vector<bezier> imovements, drive_directions dir, bool slew_on){
-  std::vector<odom> Path;
   odom Path_step;
+  Path.clear();
   for(int i = 0; i < imovements.size(); ++i){
     for(int k = 0; k < point_sample_total; ++k){
       Bratio = (k + 1) / point_sample_total;

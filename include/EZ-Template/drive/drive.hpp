@@ -2657,6 +2657,18 @@ class Drive {
   void pid_wait_until(united_pose target);
 
   /**
+   * Lock the code in a while loop until this point has been passed.
+   *
+   * Wrapper for pid_wait_until_point.
+   *
+   * \param bezier_index
+   *        the index of your bezier curve.
+   * \param index
+   *        the index within the curve.
+   */
+  void pid_wait_until(int bezier_index, int index);
+
+  /**
    * Autonomous interference detection.
    *
    * Returns true when interfered, and false when nothing happened.
@@ -3558,6 +3570,7 @@ class Drive {
   double get_angle(pose A, pose D);
   int point_sample_total = 5;
   int Bratio;
+  std::vector<odom> Path;
 
   double chain_target_start = 0.0;
   double chain_sensor_start = 0.0;

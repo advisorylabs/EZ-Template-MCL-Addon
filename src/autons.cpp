@@ -46,6 +46,8 @@ void default_constants() {
   chassis.odom_boomerang_dlead_set(0.625);     // This handles how aggressive the end of boomerang motions are
 
   chassis.pid_angle_behavior_set(ez::shortest);  // Changes the default behavior for turning, this defaults it to the shortest path there
+
+  chassis.bezier_sample_total_set(5); // uses sample_total points from the bezier curve to plug into pure pursuit.
 }
 
 ///
@@ -310,6 +312,49 @@ void odom_boomerang_injected_pure_pursuit_example() {
 
   chassis.pid_odom_set({{0_in, 0_in, 0_deg}, rev, DRIVE_SPEED},
                        true);
+  chassis.pid_wait();
+}
+
+///
+// Single Bezier Path
+///
+void single_bezier_path_example(){
+  chassis.pid_odom_bezier_set({{{0_in, 0_in}, {0_in, 24_in}, {24_in, 24_in}, {24_in, 48_in}, DRIVE_SPEED}}, fwd);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_odom_bezier_set({{{24_in, 48_in}, {0_in, 48_in}, {0_in, 24_in}, {0_in, 0_in}, DRIVE_SPEED}}, rev);
+  chassis.pid_wait();
+}
+
+///
+// multi-Bezier Path
+///
+void multiple_bezier_path_example(){
+  chassis.pid_odom_bezier_set({ {{0_in, 0_in}, {0_in, 24_in}, {24_in, 24_in}, {24_in, 48_in}, DRIVE_SPEED}, 
+                                {{24_in, 48_in}, {24_in, 60_in}, {0_in, 60_in}, {0_in, 48_in}, DRIVE_SPEED}, 
+                                {{0_in, 48_in}, {0_in, 24_in}, {24_in, 24_in}, {36_in, 24_in}, DRIVE_SPEED}}, fwd);
+  chassis.pid_wait();
+
+  chassis.pid_odom_bezier_set({{{36_in, 24_in}, {24_in, 24_in}, {0_in, 24_in}, {0_in, 0_in}, DRIVE_SPEED}}, rev);
+  chassis.pid_wait();
+}
+
+///
+// Bezier Wait Until
+///
+void bezier_wait_until_example(){
+  chassis.pid_odom_bezier_set({ {{0_in, 0_in}, {0_in, 24_in}, {24_in, 24_in}, {24_in, 48_in}, DRIVE_SPEED}, 
+                                {{24_in, 48_in}, {24_in, 60_in}, {0_in, 60_in}, {0_in, 48_in}, DRIVE_SPEED}, 
+                                {{0_in, 48_in}, {0_in, 24_in}, {24_in, 24_in}, {36_in, 24_in}, DRIVE_SPEED}}, fwd);
+  chassis.pid_wait_until(1, 2);
+  // Intake.move(127);
+  chassis.pid_wait();
+  // Intake.move(0);
+
+  chassis.pid_odom_bezier_set({{{36_in, 24_in}, {24_in, 24_in}, {0_in, 24_in}, {0_in, 0_in}, DRIVE_SPEED}}, rev);
   chassis.pid_wait();
 }
 
