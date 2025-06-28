@@ -79,7 +79,8 @@ enum e_mode { DISABLE = 0,
               TURN_TO_POINT = 3,
               DRIVE = 4,
               POINT_TO_POINT = 5,
-              PURE_PURSUIT = 6 };
+              PURE_PURSUIT = 6,
+              BEZIER_PURE_PURSUIT = 7 };
 
 /**
  * Enum for drive directions.

@@ -47,7 +47,7 @@ void default_constants() {
 
   chassis.pid_angle_behavior_set(ez::shortest);  // Changes the default behavior for turning, this defaults it to the shortest path there
 
-  chassis.bezier_sample_total_set(5); // uses sample_total points from the bezier curve to plug into pure pursuit.
+  chassis.bezier_look_ahead_set(10); // look ahead scale for besier pure pursuit. higher values are worse at turns on average. smaller numbers are generaly more jittery. Bezier curves adjust look-ahead automaticaly so its not to difficult to tune.
 }
 
 ///
@@ -342,21 +342,6 @@ void multiple_bezier_path_example(){
   chassis.pid_wait();
 }
 
-///
-// Bezier Wait Until
-///
-void bezier_wait_until_example(){
-  chassis.pid_odom_bezier_set({ {{0_in, 0_in}, {0_in, 12_in}, {12_in, 12_in}, {12_in, 24_in}, DRIVE_SPEED}, 
-                                {{12_in, 24_in}, {12_in, 30_in}, {0_in, 30_in}, {0_in, 24_in}, DRIVE_SPEED}, 
-                                {{0_in, 24_in}, {0_in, 12_in}, {12_in, 12_in}, {18_in, 12_in}, DRIVE_SPEED}}, fwd);
-  chassis.pid_wait_until(1, 2);
-  // Intake.move(127);
-  chassis.pid_wait();
-  // Intake.move(0);
-
-  chassis.pid_odom_bezier_set({{{18_in, 12_in}, {12_in, 12_in}, {0_in, 12_in}, {0_in, 0_in}, DRIVE_SPEED}}, rev);
-  chassis.pid_wait();
-}
 
 ///
 // Calculate the offsets of your tracking wheels

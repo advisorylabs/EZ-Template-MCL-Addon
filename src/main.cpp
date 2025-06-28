@@ -74,7 +74,6 @@ void initialize() {
       {"Boomerang Pure Pursuit\n\nGo to (0, 24, 45) on the way to (24, 24) then come back to (0, 0, 0)", odom_boomerang_injected_pure_pursuit_example},
       {"Single Path Bezier\n\nGo to (24, 48, 0) starting by going forward and then turning. Then turn 90 degrees and go back to (0, 0, 0)", single_bezier_path_example},
       {"Multi-Path Bezier\n\nFollow a path passing through (24, 48) then doing a U turn passing through (0, 48), which then ends at (36, 24, 90). Then return to (0, 0, 0)", multiple_bezier_path_example},
-      {"Bezier Wait Until\n\nfollow the same path as Multi-Path Bezier and start intake at index 7 of the first movement(3rd filler point in the second bezier) start the Intake. Stop the Intake at the end of the first movement.", bezier_wait_until_example},
       {"Measure Offsets\n\nThis will turn the robot a bunch of times and calculate your offsets for your tracking wheels.", measure_offsets},
   });
 

@@ -32,6 +32,9 @@ void Drive::ez_auto_task() {
       case PURE_PURSUIT:
         pp_task();
         break;
+      case BEZIER_PURE_PURSUIT:
+        bpp_task();
+        break;
       case DISABLE:
         break;
       default:
@@ -190,7 +193,7 @@ void Drive::ptp_task() {
   // a_out = util::clamp(a_out, max_slew_out);
 
   // Scale xy_out and a_out to max speed
-  // this ensures no data is lost that would otherwise by lost in clamping
+  // this ensures no data is lost that would otherwise be lost in clamping
   double faster_side = fmax(fabs(xy_out), fabs(a_out));
   if (faster_side > max_slew_out) {
     xy_out *= (max_slew_out / faster_side);
@@ -268,4 +271,18 @@ void Drive::pp_task() {
   } else {
     ptp_task();
   }
+}
+
+void Drive::bpp_task() {
+  bla = fabs(bezier_look_ahead_scale * util::distance_to_point(bezier_poses.at(bpp_index).target, bezier_poses.at(bpp_index + 1).target));
+  if(fabs(util::distance_to_point(bezier_poses.at(bpp_index).target, odom_pose_get())) < bla){
+    if (bpp_index < bezier_poses.size() - 1) {
+      bpp_index = bpp_index >= bezier_poses.size() - 1 ? bpp_index : bpp_index + 1;
+      bool slew_on = slew_left.enabled() || slew_right.enabled() ?  true : false;
+      if (!current_slew_on) slew_on = false;
+      odom target = {bezier_poses.at(bpp_index).target, fwd, 127};
+      raw_pid_odom_ptp_set(target, slew_on);
+    }
+  }
+  ptp_task();
 }

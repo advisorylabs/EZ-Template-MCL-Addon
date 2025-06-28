@@ -17,6 +17,8 @@ void Drive::odom_path_print() {
   }
 }
 void Drive::pid_odom_behavior_set(ez::e_angle_behavior behavior) { default_odom_type = behavior; }
+void Drive::bezier_sample_total_set(int sample_total){ point_sample_total = sample_total; }
+void Drive::bezier_look_ahead_set(int scale){ bezier_look_ahead_scale = scale; }
 ez::e_angle_behavior Drive::pid_odom_behavior_get() { return default_odom_type; }
 // Flip all inputs so it works internally
 pose Drive::flip_pose(pose input) {
@@ -163,39 +165,13 @@ void Drive::pid_odom_set(std::vector<united_odom> p_imovements, bool slew_on) {
 // bezier
 /////
 void Drive::pid_odom_bezier_set(std::vector<bezier> imovements, drive_directions dir){
-  std::vector<odom> Path;
-  odom Path_step;
-  for(int i = 0; i < imovements.size(); ++i){
-    for(int k = 0; k < point_sample_total; ++k){
-      Bratio = (k + 1) / point_sample_total;
-      Path_step.target = bezier_sample(imovements.at(i), Bratio);
-      if(i == imovements.size() - 1 && k == point_sample_total - 1){
-        Path_step.target.theta = get_angle(imovements.at(i).C, imovements.at(i).D);
-      }
-      Path_step.drive_direction = dir;
-      Path_step.max_xy_speed = imovements.at(i).speed;
-      Path.push_back(Path_step);
-    }
-  }
-  pid_odom_set(Path);
+  bool slew_on = dir == fwd ? slew_drive_forward_get() : slew_drive_backward_get();
+  pid_odom_bezier_set(imovements, dir, slew_on);
 }
 
 void Drive::pid_odom_bezier_set(std::vector<bezier> imovements, drive_directions dir, bool slew_on){
-  odom Path_step;
-  Path.clear();
-  for(int i = 0; i < imovements.size(); ++i){
-    for(int k = 0; k < point_sample_total; ++k){
-      Bratio = (k + 1) / point_sample_total;
-      Path_step.target = bezier_sample(imovements.at(i), Bratio);
-      if(i == imovements.size() - 1 && k == point_sample_total - 1){
-        Path_step.target.theta = get_angle(imovements.at(i).C, imovements.at(i).D);
-      }
-      Path_step.drive_direction = dir;
-      Path_step.max_xy_speed = imovements.at(i).speed;
-      Path.push_back(Path_step);
-    }
-  }
-  pid_odom_set(Path, slew_on);
+  get_bezier_pose_list(imovements, dir);
+  raw_pid_odom_bpp_set(bezier_poses, slew_on);
 }
 
 void Drive::pid_odom_bezier_set(std::vector<united_bezier> p_imovements, drive_directions dir){
@@ -439,6 +415,29 @@ void Drive::raw_pid_odom_pp_set(std::vector<odom> imovements, bool slew_on) {
   slew_right.initialize(slew_on, max_speed, dist_to_target + r_start, r_start);
 
   drive_mode_set(PURE_PURSUIT);
+}
+
+/////
+// Base pure pursuit for bezier curves
+/////
+void Drive::raw_pid_odom_bpp_set(std::vector<odom> imovements, bool slew_on){
+  odom_second_to_last = imovements.at(final_index - 2).target;
+  odom_target_start = imovements.at(final_index - 1).target;
+  odom_start = odom_pose_get();
+
+  bpp_index = 0;
+
+  raw_pid_odom_ptp_set(bezier_poses.at(bpp_index), slew_on);
+
+  l_start = drive_sensor_left();
+  r_start = drive_sensor_right();
+
+  int dir = current_drive_direction == REV ? -1 : 1;  // If we're going backwards, add a -1
+  double dist_to_target = util::distance_to_point(bezier_poses.end()->target, odom_pose_get()) * dir;
+  slew_left.initialize(slew_on, max_speed, dist_to_target + l_start, l_start);
+  slew_right.initialize(slew_on, max_speed, dist_to_target + r_start, r_start);
+
+  drive_mode_set(BEZIER_PURE_PURSUIT);
 }
 
 /////

@@ -15,6 +15,27 @@ pose Drive::bezier_sample(bezier input, double step){
     return new_pose;
 }
 
-double Drive::get_angle(pose A, pose B){
-    return atan2(B.x - A.x, B.y - A.y);
+double Drive::get_bezier_legnth(bezier A){
+    double l = 0;
+    for(double i = 0; i < 999; i++){
+        l = l + util::distance_to_point(bezier_sample(A, i / 1000), bezier_sample(A, (i + 1) / 1000));
+    }
+    return l;
+}
+
+void Drive::get_bezier_pose_list(std::vector<bezier> A, drive_directions dir){
+    bezier_poses.clear();
+    for (int i = 0; i < A.size(); i++){
+        double legnth = get_bezier_legnth(A.at(i));
+        for (double j = 0; j < legnth; j++){
+            bezier_poses.push_back({bezier_sample(A.at(i), util::clamp((j + 1) / legnth, i + 1, i)),dir , A.at(i).speed});
+        }
+    }
+    final_index = bezier_poses.size();
+    double step = A.at(A.size() - 1).D.x - A.at(A.size() - 1).C.x;
+    double slope = (A.at(A.size() - 1).D.y - A.at(A.size() - 1).C.y) / (A.at(A.size() - 1).D.x - A.at(A.size() - 1).C.x);
+    pose final_pose = bezier_sample(A.at(A.size() - 1), 1);
+    for(int i = 0; i < odom_look_ahead_get(); i++){
+        bezier_poses.push_back({{final_pose.x + (i + 1) * A.at(A.size() - 1).C.x, slope * (final_pose.x + (i + 1) * A.at(A.size() - 1).C.x) + final_pose.y}, dir, A.at(A.size() - 1).speed});
+    }
 }

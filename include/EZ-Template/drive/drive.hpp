@@ -899,6 +899,14 @@ class Drive {
   void bezier_sample_total_set( int sample_total);
 
   /**
+   * Sets the look ahead scale for bezier pure pursuit.
+   *
+   * \param scale
+   *         5
+   */
+  void bezier_look_ahead_set( int scale);
+
+  /**
    * Returns the turn behavior for turns.
    */
   e_angle_behavior pid_turn_behavior_get();
@@ -3493,10 +3501,16 @@ class Drive {
   int pp_index = 0;
   std::vector<odom> smooth_path(std::vector<odom> ipath, double weight_smooth, double weight_data, double tolerance);
   double is_past_target(pose target, pose current);
+  double get_bezier_legnth(bezier A);
+  pose get_bezier_target(std::vector<bezier> A, double prev_pose);
+  void get_bezier_pose_list(std::vector<bezier> A, drive_directions dir);
+  std::vector<odom> bezier_poses;
   void raw_pid_odom_pp_set(std::vector<odom> imovements, bool slew_on);
   bool ptf1_running = false;
   std::vector<pose> find_point_to_face(pose current, pose target, drive_directions dir, bool set_global);
   void raw_pid_odom_ptp_set(odom imovement, bool slew_on);
+  void raw_pid_odom_bpp_set(std::vector<odom> imovements, bool slew_on);
+  void bezier_pure_pursuit(std::vector<bezier> imovements, drive_directions dir, bool slew_on);
   std::vector<odom> inject_points(std::vector<odom> imovements);
   std::vector<pose> point_to_face = {{0, 0, 0}, {0, 0, 0}};
   double turn_is_toleranced(double target, double current, double input, double longest, double shortest);
@@ -3571,6 +3585,10 @@ class Drive {
   int point_sample_total = 5;
   int Bratio;
   std::vector<odom> Path;
+  double bezier_look_ahead_scale = 10;
+  int final_index;
+  double bla;
+  int bpp_index = 0;
 
   double chain_target_start = 0.0;
   double chain_sensor_start = 0.0;
@@ -3663,6 +3681,7 @@ class Drive {
   void ptp_task();
   void boomerang_task();
   void pp_task();
+  void bpp_task();
 
   /**
    * Starting value for left/right
